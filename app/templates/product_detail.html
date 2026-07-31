@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} — ProductHub{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-3 pt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Catalog</a></li>
+        <li class="breadcrumb-item active">{{ product.name }}</li>
+    </ol>
+</nav>
+
+<!-- Product Detail Card -->
+<div class="detail-card">
+    {% set colors = ['#2563eb','#7c3aed','#059669','#dc2626','#d97706','#0891b2','#be185d','#4f46e5'] %}
+    {% set color = colors[product.id % colors | length] %}
+
+    <!-- Header with product initial -->
+    <div class="detail-header text-center" style="background: {{ color }};">
+        <div style="font-size:5rem; font-weight:800; opacity:0.3;">{{ product.name[0] | upper }}</div>
+        <h1 style="font-weight:800; margin-top:-2rem;">{{ product.name }}</h1>
+    </div>
+
+    <div class="detail-body">
+        <div class="row">
+            <div class="col-md-8">
+                <h4 style="font-weight:600; color: var(--dark);">Description</h4>
+                <p style="font-size:1.05rem; line-height:1.7; color:#64748b;">
+                    {{ product.description or "No description provided for this product." }}
+                </p>
+            </div>
+            <div class="col-md-4">
+                <div style="background: var(--light-bg); border-radius:12px; padding:1.5rem; text-align:center;">
+                    <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:#94a3b8; margin-bottom:0.5rem;">Price</div>
+                    <div class="detail-price">${{ "%.2f" | format(product.price) }}</div>
+                </div>
+
+                <div style="background: var(--light-bg); border-radius:12px; padding:1rem; margin-top:1rem; text-align:center;">
+                    <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:#94a3b8; margin-bottom:0.3rem;">Added On</div>
+                    <div style="font-weight:600; color: var(--dark);">{{ product.created_at.strftime('%B %d, %Y') }}</div>
+                </div>
+
+                <div style="background: var(--light-bg); border-radius:12px; padding:1rem; margin-top:1rem; text-align:center;">
+                    <div style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:#94a3b8; margin-bottom:0.3rem;">Product ID</div>
+                    <div style="font-weight:600; color: var(--dark);">#{{ product.id }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <hr style="margin: 2rem 0; border-color: #e2e8f0;">
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{{ url_for('main.product_edit', product_id=product.id) }}" class="btn btn-primary">
+                <i class="bi bi-pencil"></i> Edit Product
+            </a>
+            <form method="POST"
+                  action="{{ url_for('main.product_delete', product_id=product.id) }}"
+                  onsubmit="return confirm('Delete {{ product.name }}? This cannot be undone.');"
+                  class="d-inline">
+                <button type="submit" class="btn btn-outline-danger">
+                    <i class="bi bi-trash"></i> Delete Product
+                </button>
+            </form>
+            <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary ms-auto">
+                <i class="bi bi-arrow-left"></i> Back to Catalog
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

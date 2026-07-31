@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ "Edit " + product.name if product else "Add New Product" }} — ProductHub
+{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-3 pt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('main.index') }}">Catalog</a></li>
+        {% if product %}
+        <li class="breadcrumb-item"><a href="{{ url_for('main.product_detail', product_id=product.id) }}">{{ product.name }}</a></li>
+        <li class="breadcrumb-item active">Edit</li>
+        {% else %}
+        <li class="breadcrumb-item active">Add New Product</li>
+        {% endif %}
+    </ol>
+</nav>
+
+<!-- Form Card -->
+<div class="form-card mx-auto">
+    <div class="text-center mb-4">
+        {% if product %}
+            <i class="bi bi-pencil-square" style="font-size:2rem; color: var(--primary);"></i>
+            <h2 style="font-weight:700; color: var(--dark);">Edit Product</h2>
+            <p class="text-muted">Update the details below</p>
+        {% else %}
+            <i class="bi bi-plus-circle" style="font-size:2rem; color: var(--primary);"></i>
+            <h2 style="font-weight:700; color: var(--dark);">Add New Product</h2>
+            <p class="text-muted">Fill in the details to add a product</p>
+        {% endif %}
+    </div>
+
+    {% if error %}
+        <div class="alert alert-danger d-flex align-items-center" role="alert" style="border-radius:10px;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        <div class="mb-3">
+            <label for="name" class="form-label fw-semibold">
+                <i class="bi bi-tag"></i> Product Name <span class="text-danger">*</span>
+            </label>
+            <input type="text" class="form-control" id="name" name="name"
+                   placeholder="e.g. Wireless Headphones"
+                   value="{{ product.name if product else '' }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label fw-semibold">
+                <i class="bi bi-text-paragraph"></i> Description
+            </label>
+            <textarea class="form-control" id="description" name="description"
+                      rows="4"
+                      placeholder="Describe the product features, specs, or details...">{{ product.description if product else '' }}</textarea>
+        </div>
+
+        <div class="mb-4">
+            <label for="price" class="form-label fw-semibold">
+                <i class="bi bi-currency-dollar"></i> Price <span class="text-danger">*</span>
+            </label>
+            <input type="number" step="0.01" min="0" class="form-control"
+                   id="price" name="price"
+                   placeholder="0.00"
+                   value="{{ '%.2f' | format(product.price) if product else '' }}" required>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                {% if product %}
+                    <i class="bi bi-check-lg"></i> Update Product
+                {% else %}
+                    <i class="bi bi-plus-circle"></i> Create Product
+                {% endif %}
+            </button>
+            <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary btn-lg">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
